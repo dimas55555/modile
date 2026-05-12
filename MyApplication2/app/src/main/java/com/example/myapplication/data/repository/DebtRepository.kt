@@ -28,12 +28,20 @@ class DebtRepository(
         debtDao.insertDebt(debt)
     }
 
+    suspend fun updateDebt(debt: DebtEntity) {
+        debtDao.updateDebt(debt)
+    }
+
     suspend fun deleteDebt(debt: DebtEntity) {
         debtDao.deleteDebt(debt)
     }
 
     suspend fun getDebtById(id: Int): DebtEntity? {
         return debtDao.getDebtById(id)
+    }
+
+    suspend fun getLastDebt(): DebtEntity? {
+        return debtDao.getLastDebt()
     }
 
     suspend fun addPerson(person: PersonEntity) {
@@ -46,6 +54,24 @@ class DebtRepository(
 
     suspend fun addPayment(payment: PaymentEntity) {
         paymentDao.insertPayment(payment)
+    }
+
+    suspend fun updateDebtAmount(
+        debtId: Int,
+        newAmount: Double
+    ) {
+
+        val debt =
+            debtDao.getDebtById(debtId)
+                ?: return
+
+        val updated = debt.copy(
+            currentAmount = newAmount,
+            isReturned = newAmount == 0.0,
+            syncStatus = "synced"
+        )
+
+        debtDao.updateDebt(updated)
     }
 
     suspend fun syncDebts() {

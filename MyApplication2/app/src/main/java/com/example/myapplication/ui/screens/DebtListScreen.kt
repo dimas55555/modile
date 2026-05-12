@@ -12,6 +12,7 @@ import androidx.navigation.NavController
 import com.example.myapplication.data.local.entity.DebtEntity
 import com.example.myapplication.navigation.NavRoutes
 import com.example.myapplication.viewmodel.DebtViewModel
+import com.example.myapplication.websocket.SocketState
 
 @Composable
 fun DebtListScreen(
@@ -21,17 +22,22 @@ fun DebtListScreen(
 
     val debts by viewModel.debts.collectAsState()
 
+    val socketState by
+    viewModel.socketState.collectAsState()
+
     Scaffold(
 
         floatingActionButton = {
 
             FloatingActionButton(
                 onClick = {
+
                     navController.navigate(
                         NavRoutes.ADD_PERSON_WITH_DEBT
                     )
                 }
             ) {
+
                 Text("+")
             }
         }
@@ -41,23 +47,57 @@ fun DebtListScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .padding(16.dp)
         ) {
 
             Text(
                 text = "Трекер боргів",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(16.dp)
+                style =
+                    MaterialTheme.typography.headlineMedium
             )
 
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp)
-            ) {
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "WebSocket: $socketState"
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row {
+
+                Button(
+                    onClick = {
+
+                        viewModel.connectSocket()
+                    }
+                ) {
+
+                    Text("Connect")
+                }
+
+                Spacer(
+                    modifier = Modifier.width(12.dp)
+                )
+
+                OutlinedButton(
+                    onClick = {
+
+                        viewModel.disconnectSocket()
+                    }
+                ) {
+
+                    Text("Disconnect")
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            LazyColumn {
 
                 items(debts) { debt ->
 
-                    DebtItem(
+                    DebtCard(
                         debt = debt,
                         onClick = {
 
@@ -73,7 +113,7 @@ fun DebtListScreen(
 }
 
 @Composable
-fun DebtItem(
+fun DebtCard(
     debt: DebtEntity,
     onClick: () -> Unit
 ) {
@@ -83,6 +123,7 @@ fun DebtItem(
             .fillMaxWidth()
             .padding(bottom = 12.dp)
             .clickable {
+
                 onClick()
             }
     ) {
@@ -93,17 +134,20 @@ fun DebtItem(
 
             Text(
                 text = debt.title,
-                style = MaterialTheme.typography.titleMedium
+                style =
+                    MaterialTheme.typography.titleMedium
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Залишилось: ${debt.currentAmount} грн"
+                text =
+                    "Поточний борг: ${debt.currentAmount}"
             )
 
             Text(
-                text = "Початково: ${debt.initialAmount} грн"
+                text =
+                    "Початковий борг: ${debt.initialAmount}"
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -111,15 +155,14 @@ fun DebtItem(
             Text(
                 text =
                     if (debt.isReturned)
-                        "Статус: Погашено"
+                        "Погашено"
                     else
-                        "Статус: Активний"
+                        "Активний"
             )
 
-            Spacer(modifier = Modifier.height(4.dp))
-
             Text(
-                text = "Sync: ${debt.syncStatus}"
+                text =
+                    "Sync: ${debt.syncStatus}"
             )
         }
     }

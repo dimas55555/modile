@@ -64,7 +64,7 @@ class FakeApiService {
 
     suspend fun fetchDebts(): List<DebtEntity> {
 
-        delay(250)
+        delay(2500)
 
         return emptyList()
     }

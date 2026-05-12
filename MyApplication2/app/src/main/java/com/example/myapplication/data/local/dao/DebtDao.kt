@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface DebtDao {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDebt(debt: DebtEntity)
 
     @Delete
@@ -21,4 +21,11 @@ interface DebtDao {
 
     @Query("SELECT * FROM debts WHERE id = :id")
     suspend fun getDebtById(id: Int): DebtEntity?
+
+    @Query("""
+        SELECT * FROM debts
+        ORDER BY id DESC
+        LIMIT 1
+    """)
+    suspend fun getLastDebt(): DebtEntity?
 }

@@ -6,6 +6,8 @@ import com.example.myapplication.data.local.entity.DebtEntity
 import com.example.myapplication.data.local.entity.PaymentEntity
 import com.example.myapplication.data.local.entity.PersonEntity
 import com.example.myapplication.data.repository.DebtRepository
+import com.example.myapplication.websocket.SocketManager
+import com.example.myapplication.websocket.WsMessage
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -13,6 +15,12 @@ import kotlinx.coroutines.launch
 class DebtViewModel(
     private val repository: DebtRepository
 ) : ViewModel() {
+
+    private val socketManager =
+        SocketManager()
+
+    val socketState =
+        socketManager.socketState
 
     val debts = repository
         .getAllDebts()
@@ -22,10 +30,41 @@ class DebtViewModel(
             emptyList()
         )
 
-    init {
+
+    fun connectSocket() {
+
+        socketManager.connect {
+
+            repository.getLastDebt()?.id
+        }
+
+        socketManager.onMessage { message ->
+
+            handleSocketMessage(message)
+        }
+    }
+
+    fun disconnectSocket() {
+
+        socketManager.disconnect()
+    }
+
+    private fun handleSocketMessage(
+        message: WsMessage
+    ) {
 
         viewModelScope.launch {
-            repository.syncDebts()
+
+            when (message.type) {
+
+                "DEBT_UPDATED" -> {
+
+                    repository.updateDebtAmount(
+                        debtId = message.debtId,
+                        newAmount = message.newAmount
+                    )
+                }
+            }
         }
     }
 
@@ -67,9 +106,7 @@ class DebtViewModel(
                 syncStatus = "pending"
             )
 
-            repository.deleteDebt(debt)
-
-            repository.addDebt(updatedDebt)
+            repository.updateDebt(updatedDebt)
 
             repository.addPayment(
                 PaymentEntity(
@@ -82,5 +119,12 @@ class DebtViewModel(
                 )
             )
         }
+    }
+
+    override fun onCleared() {
+
+        super.onCleared()
+
+        socketManager.disconnect()
     }
 }
