@@ -28,4 +28,9 @@ interface DebtDao {
         LIMIT 1
     """)
     suspend fun getLastDebt(): DebtEntity?
+
+    @Query(
+        "DELETE FROM debts WHERE isReturned = 1"
+    )
+    suspend fun deleteReturnedDebts()
 }

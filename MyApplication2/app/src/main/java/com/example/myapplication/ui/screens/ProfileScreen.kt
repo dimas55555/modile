@@ -2,13 +2,16 @@ package com.example.myapplication.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.myapplication.viewmodel.DebtViewModel
+import androidx.navigation.NavController
+import com.example.myapplication.navigation.NavRoutes
 
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(
+    navController: NavController
+) {
 
     Column(
         modifier = Modifier
@@ -55,6 +58,21 @@ fun ProfileScreen() {
                     text =
                         "API: Fake REST API"
                 )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Button(
+                    onClick = {
+
+                        navController.navigate(
+                            NavRoutes.LIST
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+
+                    Text("На головний екран")
+                }
             }
         }
     }

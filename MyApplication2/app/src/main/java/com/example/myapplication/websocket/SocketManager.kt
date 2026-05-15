@@ -28,7 +28,6 @@ class SocketManager {
         latestDebtIdProvider: suspend () -> Int?
     ) {
 
-        // якщо вже підключено — не дублюємо
         if (_socketState.value == SocketState.Connected ||
             _socketState.value == SocketState.Connecting
         ) return
@@ -47,7 +46,6 @@ class SocketManager {
                     latestDebtIdProvider,
                     isActive = { socketJob?.isActive == true }
                 ) {
-
                     val parsed =
                         Json.decodeFromString<WsMessage>(it)
 
@@ -55,7 +53,6 @@ class SocketManager {
                 }
 
             } catch (e: CancellationException) {
-                // нормальна зупинка
             } catch (e: Exception) {
                 reconnect(latestDebtIdProvider)
             }
@@ -65,22 +62,16 @@ class SocketManager {
     private fun reconnect(
         latestDebtIdProvider: suspend () -> Int?
     ) {
-
         _socketState.value = SocketState.Reconnecting
-
         socketJob = scope.launch {
-
             delay(3000)
-
             connect(latestDebtIdProvider)
         }
     }
 
     fun disconnect() {
-
         socketJob?.cancel()
         socketJob = null
-
         _socketState.value = SocketState.Disconnected
     }
 

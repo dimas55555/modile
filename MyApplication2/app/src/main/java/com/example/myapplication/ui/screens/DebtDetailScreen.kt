@@ -141,7 +141,7 @@ fun DebtInfo(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Sync: ${debt.syncStatus}"
+                text = "Синхронізація: ${debt.syncStatus}"
             )
         }
     }

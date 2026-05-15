@@ -8,12 +8,8 @@ data class PaymentEntity(
 
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-
     val debtId: Int,
-
     val amount: Double,
-
     val paymentDate: Long,
-
     val isFullPayment: Boolean
 )

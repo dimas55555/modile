@@ -119,8 +119,7 @@ class MainActivity : ComponentActivity() {
                 composable(
                     NavRoutes.PROFILE
                 ) {
-
-                    ProfileScreen()
+                    ProfileScreen(navController)
                 }
             }
         }

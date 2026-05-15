@@ -17,17 +17,39 @@ fun AddPersonWithDebtScreen(
 ) {
 
     var name by remember { mutableStateOf("") }
-
     var phone by remember { mutableStateOf("") }
-
     var email by remember { mutableStateOf("") }
 
-    var debtTitle by remember {
-        mutableStateOf("")
-    }
+    var debtTitle by remember { mutableStateOf("") }
+    var debtAmount by remember { mutableStateOf("") }
 
-    var debtAmount by remember {
-        mutableStateOf("")
+    var error by remember { mutableStateOf<String?>(null) }
+
+    fun validate(): Boolean {
+
+        if (name.isBlank()) {
+            error = "Ім'я не може бути пустим"
+            return false
+        }
+
+        if (phone.isBlank()) {
+            error = "Телефон не може бути пустим"
+            return false
+        }
+
+        if (debtTitle.isBlank()) {
+            error = "Назва боргу обов'язкова"
+            return false
+        }
+
+        val amount = debtAmount.toDoubleOrNull()
+        if (amount == null || amount <= 0) {
+            error = "Сума має бути більше 0"
+            return false
+        }
+
+        error = null
+        return true
     }
 
     Column(
@@ -43,14 +65,18 @@ fun AddPersonWithDebtScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        error?.let {
+            Text(
+                text = it,
+                color = MaterialTheme.colorScheme.error
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+        }
+
         OutlinedTextField(
             value = name,
-            onValueChange = {
-                name = it
-            },
-            label = {
-                Text("Ім'я")
-            },
+            onValueChange = { name = it },
+            label = { Text("Ім'я") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -58,12 +84,8 @@ fun AddPersonWithDebtScreen(
 
         OutlinedTextField(
             value = phone,
-            onValueChange = {
-                phone = it
-            },
-            label = {
-                Text("Телефон")
-            },
+            onValueChange = { phone = it },
+            label = { Text("Телефон") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -71,12 +93,8 @@ fun AddPersonWithDebtScreen(
 
         OutlinedTextField(
             value = email,
-            onValueChange = {
-                email = it
-            },
-            label = {
-                Text("Email")
-            },
+            onValueChange = { email = it },
+            label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -84,12 +102,8 @@ fun AddPersonWithDebtScreen(
 
         OutlinedTextField(
             value = debtTitle,
-            onValueChange = {
-                debtTitle = it
-            },
-            label = {
-                Text("Назва боргу")
-            },
+            onValueChange = { debtTitle = it },
+            label = { Text("Назва боргу") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -97,12 +111,8 @@ fun AddPersonWithDebtScreen(
 
         OutlinedTextField(
             value = debtAmount,
-            onValueChange = {
-                debtAmount = it
-            },
-            label = {
-                Text("Сума")
-            },
+            onValueChange = { debtAmount = it },
+            label = { Text("Сума") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -111,53 +121,49 @@ fun AddPersonWithDebtScreen(
         Button(
             onClick = {
 
+                if (!validate()) return@Button
+
+                val amount = debtAmount.toDouble()
+
                 val person = PersonEntity(
                     name = name,
                     phone = phone,
                     email = email,
                     isTrusted = true,
-                    createdAt =
-                        System.currentTimeMillis()
+                    createdAt = System.currentTimeMillis()
                 )
 
                 val debt = DebtEntity(
                     personId = 1,
                     title = debtTitle,
-                    initialAmount =
-                        debtAmount.toDoubleOrNull()
-                            ?: 0.0,
-                    currentAmount =
-                        debtAmount.toDoubleOrNull()
-                            ?: 0.0,
+                    initialAmount = amount,
+                    currentAmount = amount,
                     isReturned = false,
-                    dueDate =
-                        System.currentTimeMillis(),
+                    dueDate = System.currentTimeMillis(),
                     syncStatus = "pending"
                 )
 
-                viewModel.addPersonWithDebt(
-                    person,
-                    debt
-                )
+                viewModel.addPersonWithDebt(person, debt)
 
                 navController.popBackStack()
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-
             Text("Зберегти")
         }
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedButton(
+        Button(
             onClick = {
-
                 navController.popBackStack()
             },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+            ),
             modifier = Modifier.fillMaxWidth()
         ) {
-
             Text("Скасувати")
         }
     }

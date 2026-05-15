@@ -6,8 +6,6 @@ import kotlinx.serialization.Serializable
 data class WsMessage(
 
     val type: String,
-
     val debtId: Int,
-
     val newAmount: Double
 )

@@ -82,4 +82,8 @@ class DebtRepository(
             debtDao.insertDebt(it)
         }
     }
+    suspend fun clearReturnedDebts() {
+
+        debtDao.deleteReturnedDebts()
+    }
 }

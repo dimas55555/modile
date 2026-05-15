@@ -121,6 +121,14 @@ class DebtViewModel(
         }
     }
 
+    fun clearReturnedDebts() {
+
+        viewModelScope.launch {
+
+            repository.clearReturnedDebts()
+        }
+    }
+
     override fun onCleared() {
 
         super.onCleared()
