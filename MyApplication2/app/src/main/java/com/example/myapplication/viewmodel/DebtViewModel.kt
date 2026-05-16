@@ -32,20 +32,16 @@ class DebtViewModel(
 
 
     fun connectSocket() {
-
         socketManager.connect {
-
             repository.getLastDebt()?.id
         }
 
         socketManager.onMessage { message ->
-
             handleSocketMessage(message)
         }
     }
 
     fun disconnectSocket() {
-
         socketManager.disconnect()
     }
 
@@ -54,11 +50,8 @@ class DebtViewModel(
     ) {
 
         viewModelScope.launch {
-
             when (message.type) {
-
                 "DEBT_UPDATED" -> {
-
                     repository.updateDebtAmount(
                         debtId = message.debtId,
                         newAmount = message.newAmount
@@ -122,17 +115,13 @@ class DebtViewModel(
     }
 
     fun clearReturnedDebts() {
-
         viewModelScope.launch {
-
             repository.clearReturnedDebts()
         }
     }
 
     override fun onCleared() {
-
         super.onCleared()
-
         socketManager.disconnect()
     }
 }

@@ -16,7 +16,8 @@ fun ProfileScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Top
     ) {
 
         Text(
@@ -34,44 +35,41 @@ fun ProfileScreen(
                 modifier = Modifier.padding(16.dp)
             ) {
 
-                Text(
-                    text = "Користувач: Дмитро"
-                )
+                Text("Користувач: Дмитро")
+                Spacer(Modifier.height(8.dp))
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Text("Стратегія: Offline-first")
+                Spacer(Modifier.height(8.dp))
 
-                Text(
-                    text =
-                        "Стратегія: Offline-first"
-                )
+                Text("Локальне сховище: Room Database")
+                Spacer(Modifier.height(8.dp))
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text =
-                        "Локальне сховище: Room Database"
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text =
-                        "API: Fake REST API"
-                )
+                Text("API: Fake REST API")
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                Button(
-                    onClick = {
-
-                        navController.navigate(
-                            NavRoutes.LIST
-                        )
-                    },
-                    modifier = Modifier.fillMaxWidth()
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
 
-                    Text("На головний екран")
+                    Button(
+                        onClick = {
+                            navController.navigate(NavRoutes.LIST)
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("На головний екран")
+                    }
+
+                    OutlinedButton(
+                        onClick = {
+                            navController.navigate(NavRoutes.SECURITY)
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Налаштування безпеки")
+                    }
                 }
             }
         }
