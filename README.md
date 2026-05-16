@@ -1,4 +1,4 @@
-# 📱 My Projects Overview
+# 📱 My Modile Overview
 
 У цьому репозиторії міститься три окремі проєкти:
 
