@@ -102,7 +102,7 @@ DebtTracker — мобільний Android-застосунок для облі�
 ---
 
 ## 💳 PaymentEntity
-Модель часткового погашення боргу.
+Модель погашення боргу.
 
 ### Поля:
 - `id: Int` — ідентифікатор платежу
@@ -114,8 +114,6 @@ DebtTracker — мобільний Android-застосунок для облі�
 ---
 
 # 🗂️ Архітектура застосунку
-
-Проєкт побудований за MVVM-архітектурою.
 
 ### Основні шари:
 - `ui/` — Compose екрани
@@ -267,20 +265,114 @@ DebtTracker — мобільний Android-застосунок для облі�
 
 # 🧪 Тестування
 
-## PartialDebtPaymentTest
+## DebtCalculationTest
 Перевіряє:
 - коректне часткове погашення боргу
-- правильний розрахунок залишку
-- статус активного боргу
+- правильне зменшення currentAmount
+- повне закриття боргу
+- зміну статусу isReturned
+- оновлення syncStatus після змін
+
+---
+
+## DebtCalculationEdgeCaseTest
+Перевіряє:
+- захист від від’ємного боргу
+- переплату (overpayment)
+- оплату на 0
+- edge cases фінансової логіки
+
+---
+
+## DebtFilteringAndSortingTest
+Перевіряє:
+- фільтрацію активних боргів
+- пошук по title
+- case-insensitive пошук
+- сортування за сумою боргу
+- коректний порядок елементів
+
+---
+
+## DebtValidationTest
+Перевіряє:
+- валідацію пустих полів
+- перевірку числових значень
+- конвертацію String → Double
+- обробку невалідного вводу
 
 ---
 
 ## DebtRepositoryTest
 Перевіряє:
-- оновлення currentAmount
-- синхронізацію боргів
-- вставку даних у Room
 - роботу Repository шару
+- оновлення currentAmount
+- виклики DAO методів
+- синхронізацію боргів
+- вставку даних у локальну БД
+- інтеграцію FakeApiService
+
+---
+
+## DebtViewModelTest
+Перевіряє:
+- початковий стан StateFlow
+- емісію списку боргів
+- виклики Repository з ViewModel
+- додавання Person + Debt
+- роботу socketState
+- реактивне оновлення UI стану
+
+---
+
+## SocketManagerTest
+Перевіряє:
+- початковий стан WebSocket
+- перехід у Disconnected
+- коректне оновлення socketState
+
+---
+
+## SocketReconnectTest
+Перевіряє:
+- зміну стану Reconnecting
+- логіку повторного підключення
+
+---
+
+## WebSocketLogicTest
+Перевіряє:
+- JSON parsing WebSocket повідомлень
+- десеріалізацію WsMessage
+- коректне читання полів повідомлення
+- стани websocket-з’єднання
+
+---
+
+## BiometricStateTest
+Перевіряє:
+- початковий стан біометрії
+- Failed state
+- збереження повідомлень помилок
+- зміну станів автентифікації
+
+---
+
+## SecurityPreferencesTest
+Перевіряє:
+- увімкнення біометрії
+- вимкнення біометрії
+- збереження security flag логіки
+
+---
+
+## MainDispatcherRule
+Використовується для:
+- тестування coroutines
+- підміни Dispatchers.Main
+- коректної роботи StateFlow у тестах
+
+---
 
 ---
 
